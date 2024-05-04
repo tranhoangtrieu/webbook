@@ -1,0 +1,81 @@
+﻿@model ValueTuple<IEnumerable<Coupon>, IEnumerable<Category>, IEnumerable<Product>>
+@* @model ProductCategoryViewModel *@
+<h1>Vouchers</h1>
+
+@{
+    var selectedCoupons = new Dictionary<int, Coupon>();
+
+    var productCategories = Model.Item3.GroupBy(p => p.CategoryId)
+                                .ToDictionary(g => g.Key, g => g.First().Category.Name);
+
+    var shoppingCart = ViewBag.ShoppingCart as ShoppingCart;
+
+}
+
+<form asp-controller="ShoppingCart" asp-action="Index" method="post">
+    <table class="table">
+        <thead>
+            <tr>
+                <th></th>
+                <th>Id</th>
+                <th>Code</th>
+                <th>Category</th>
+                <th>Amount</th>
+                <th>Discount</th>
+                <th>Start Date</th>
+                <th>End Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var coupon in Model.Item1)
+            {
+                <tr class="justify-content-between align-items-center @(coupon.IsActive && productCategories.ContainsKey(coupon.CategoryId) && productCategories[coupon.CategoryId] == Model.Item2.FirstOrDefault(c => c.Id == coupon.CategoryId)?.Name ? "" : "text-muted")">
+                    <td>
+                        @{
+                            var isChecked = selectedCoupons.ContainsKey(coupon.CategoryId) && selectedCoupons[coupon.CategoryId] == coupon;
+                        }
+                        <input type="radio" name="selectedCouponIds" value="@coupon.Id" @(isChecked ? "checked" : "") @(coupon.IsActive ? "" : "disabled") />
+                        @if (isChecked)
+                        {
+                            <input type="hidden" name="selectedCouponIds" value="@coupon.Id" />
+                        }
+                    </td>
+                    <td>
+                        <span>@coupon.Id</span>
+                    </td>
+                    <td>
+                        <span>
+                            @coupon.Code
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            @Model.Item2.FirstOrDefault(c => c.Id == coupon.CategoryId)?.Name
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            @coupon.Amount
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            @coupon.Discount
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            @coupon.StartDate.ToShortDateString()
+                        </span>
+                    </td>
+                    <td>
+                        <span>
+                            @coupon.EndDate.ToShortDateString()
+                        </span>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    <button type="submit" class="btn btn-primary">Add Selected Vouchers</button>
+</form>

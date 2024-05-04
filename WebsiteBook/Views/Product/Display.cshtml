@@ -1,0 +1,64 @@
+﻿@using Microsoft.IdentityModel.Tokens
+@model             Product
+
+<h2>Product Details</h2>
+
+
+@* Role Admin & Employee *@
+@if (User.Identity.IsAuthenticated && User.IsInRole("Employee") || User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+{
+    <div>
+        <h4>Name: @Model.Name</h4>
+        <h4>Price: @Model.Price</h4>
+        <h4>Description: @Model.Description</h4>
+        <h4>Description: @Model.Author</h4>
+
+        <img src="@Model.ImageUrl" alt="Product Image" style="width: 300px; height: auto;" />
+
+        @if (Model.ImageUrls != null)
+        {
+            foreach (var imageUrl in Model.ImageUrls)
+            {
+                <img src="@imageUrl" alt="Product Image" style="width: 300px; height: auto;" />
+            }
+        }
+    </div>
+    <a asp-action="Index">Cancel</a>
+}
+
+
+@* Role Customer & Visitor *@
+else
+{
+    <div class="d-flex flex-row gap-lg-5 p-5">
+        <div class="pe-5">
+            <img class="rounded" src="@Model.ImageUrl" alt="Product Image" style="  min-height: 200px;max-height: 400px;width: auto;" />
+        </div>
+        <div class="justify-content-center align-item-between">
+            <h3>@Model.Name</h3>
+            <h4>Description: @Model.Author</h4>
+            <h4 class="text-info">@Model.Price</h4>
+
+            <form method="post" action="@Url.Action("AddToCart", "ShoppingCart", new { productId = Model.Id })">
+                <input type="number" name="quantity" id="quantityInput" value="1" />
+                <div class="d-flex flex-row gap-lg-5 pt-lg-5">
+                    <button type="submit" class="btn btn-outline-dark">
+                        <i class="bi-cart-fill me-1"></i> Add to Cart
+                    </button>
+                    <a asp-action="Index">Cancel</a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var quantityInput = document.getElementById("quantityInput");
+            var addToCartLink = document.querySelector("a[asp-action='AddToCart']");
+
+            quantityInput.addEventListener("change", function () {
+                addToCartLink.href = addToCartLink.href.replace("asp-route-quantity=", "asp-route-quantity=" + this.value);
+            });
+        });
+    </script>
+}

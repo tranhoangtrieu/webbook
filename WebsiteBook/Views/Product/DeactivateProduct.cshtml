@@ -1,0 +1,16 @@
+﻿@model     Product
+<h2>Are you sure you want to deactivate this?</h2>
+<h2>Deactivate Product</h2>
+
+<div>
+    <h4>Name: @Model.Name</h4>
+    <h4>Price: @Model.Price</h4>
+    <h4>Description: @Model.Description</h4>
+</div>
+
+
+<form asp-action="DeactivateProduct" method="post">
+    <input type="hidden" asp-for="Id" />
+    <input type="submit" value="DeactivateProduct" class="btn btn-danger" /> |
+    <a asp-action="Index">Cancel</a>
+</form>

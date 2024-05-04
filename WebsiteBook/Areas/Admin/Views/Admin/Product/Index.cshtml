@@ -1,0 +1,38 @@
+﻿@model IEnumerable<Product>
+
+<h2>Products</h2>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default p-lg-3 border rounded ">
+                <div class="panel panel-heading">
+                    @Html.ActionLink("Update", "Update", new { id = item.Id }, new { @class = "pull-right" })
+                </div>
+                <div class="panel-body">
+                    <p>
+                        <img src="@item.ImageUrl" alt="Product Image" style="width: 300px; height: 400px;" />
+                    </p>
+                    @item.Name
+                    <p>
+                        <strong>@item.Price Đ</strong>
+                    </p>
+
+                </div>
+                <div class="panel-footer clearfix">
+                    <div class="pull-right flex-row">
+                        <a href="#" class="btn btn-primary">Order</a>
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+                        @Html.ActionLink("Read more...", "Display", new { id = item.Id }, new { @class = "btn btn-primary" })
+                    </div>
+@*                     @using (Html.BeginForm("Delete", "Books", new { id = item.Id }, FormMethod.Post, new { @class = "form-inline pull-right" }))
+                    {
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn btn-danger">Delete</button>
+                    } *@
+                </div>
+            </div>
+        </div>
+    }
+</div>

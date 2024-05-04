@@ -1,0 +1,42 @@
+﻿@model IEnumerable<ApplicationUser>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<h2>Employees</h2>
+@using (Html.BeginForm())
+{
+    <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light border-bottom box-shadow mb-3">
+    <div class="container-fluid px-5">
+        <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
+            @* Search bar *@
+            <form class="d-flex" asp-controller="" asp-action="Search" method="get" style="width: 150px;">
+                <input class="form-control me-2" type="search" id="txtSearch" placeholder="Search" aria-label="Search" name="searchString">
+                <button class="btn btn-secondary" type="submit" value="Search">
+                    <img src="https://cdn.icon-icons.com/icons2/2768/PNG/512/search_button_icon_176619.png" class="img-fluid rounded" alt="ICON" style="max-width: 30px; height: 30px;">
+                </button>
+            </form>
+        </div>
+    </div>
+    </nav>
+}
+<table class="table">
+    <thead>
+        <tr>
+            <th>FullName</th>
+            <th>Username</th>
+            <th>Email</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.FullName</td>
+                <td>@user.UserName</td>
+                <td>@user.Email</td>
+            </tr>
+        }
+    </tbody>
+</table>

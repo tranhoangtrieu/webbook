@@ -1,0 +1,43 @@
+﻿@model ValueTuple<Order, decimal >
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.querySelector('form');
+            form.addEventListener('submit', function (event) {
+                var requiredFields = form.querySelectorAll('[required]');
+                var isValid = true;
+
+                requiredFields.forEach(function (field) {
+                    if (field.value.trim() === '') {
+                        isValid = false;
+                        alert('Please fill out all required fields.');
+                        event.preventDefault();
+                        return;
+                    }
+                });
+
+                if (!isValid) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+}
+
+<h2>Checkout</h2>
+<form asp-action="Checkout" method="post">
+    <input type="hidden" name="discountTotal" value="@Model.Item2" />
+    <div class="form-group">
+        <label asp-for="@Model.Item1.ShippingAddress">Shipping Address</label>
+        <input asp-for="@Model.Item1.ShippingAddress" class="form-control" required />
+    </div>
+    <div class="form-group">
+        <label asp-for="@Model.Item1.Notes">Notes</label>
+        <textarea asp-for="@Model.Item1.Notes" class="form-control" required></textarea>
+    </div>
+    <div class="form-group">
+        <button type="submit" name="payment" value="Thanh toán COD" class="btn btn-primary text-uppercase text-black w-100 mt-2">Thanh toán COD</button>
+        <button type="submit" name="payment" value="Thanh toán VNPay" class="btn border-secondary text-uppercase text-primary w-100 mt-2">Thanh toán VNPay</button>
+    </div>
+</form>

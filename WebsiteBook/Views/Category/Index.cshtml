@@ -1,0 +1,49 @@
+﻿@model IEnumerable<Category>
+
+<h2>Category</h2>
+<div class="d-flex flex-row gap-4">
+
+    <a asp-action="Add">
+        <button class="btn btn-primary">
+            Add
+        </button>
+    </a>
+    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+    {
+        <form method="post" asp-action="DeleteAll">
+            <button type="submit" class="btn btn-danger">Delete All</button>
+        </form>
+    }
+
+</div>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr class="justify-content-between align-items-center">
+                <td>
+                    <span>@item.Id</span>
+                </td>
+                <td>
+                    <span>@item.Name</span>
+                </td>
+                <td>
+                    @Html.ActionLink("Update", "Update", new { id = item.Id }, new { @class = "btn btn-primary" })
+                    @Html.ActionLink("Read more...", "Display", new { id = item.Id }, new { @class = "btn btn-primary" })
+                    @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                    {
+                        @Html.ActionLink("Delete", "Delete", new { id = item.Id }, new { @class = "btn btn-danger" })
+                    }
+                </td>
+            </tr>
+
+        }
+    </tbody>
+</table>

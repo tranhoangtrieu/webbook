@@ -1,0 +1,50 @@
+﻿@model Coupon
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+<h1>Add Coupon</h1>
+
+<form asp-controller="Coupon" asp-action="Add" method="post" enctype="multipart/form-data">
+    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+    <div class="form-group">
+        <label asp-for="Code" class="control-label"></label>
+        <input asp-for="Code" class="form-control" />
+        <span asp-validation-for="Code" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Amount" class="control-label"></label>
+        <input asp-for="Amount" class="form-control" />
+        <span asp-validation-for="Amount" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="Discount" class="control-label"></label>
+        <input asp-for="Discount" class="form-control" />
+        <span asp-validation-for="Discount" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label"></label>
+        <div class="input-group date" id="startDatePicker" data-target-input="nearest">
+            <input asp-for="StartDate" class="form-control datetimepicker-input" data-target="#startDatePicker" />
+            <div class="input-group-append" data-target="#startDatePicker" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+            </div>
+        </div>
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label"></label>
+        <div class="input-group date" id="endDatePicker" data-target-input="nearest">
+            <input asp-for="EndDate" class="form-control datetimepicker-input" data-target="#endDatePicker" />
+            <div class="input-group-append" data-target="#endDatePicker" data-toggle="datetimepicker">
+                <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+            </div>
+        </div>
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="CategoryId">Category</label>
+        <select asp-for="CategoryId" asp-items="ViewBag.Categories" class="form-control"></select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Add</button>
+    <a asp-action="Index">Cancel</a>
+</form>

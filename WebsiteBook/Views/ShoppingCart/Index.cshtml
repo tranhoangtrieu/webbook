@@ -1,0 +1,214 @@
+﻿@* @model ShoppingCart *@
+@* @model ValueTuple<ShoppingCart, IEnumerable<Coupon>, IEnumerable<Product>, IEnumerable<Category>> *@
+@* @model Tuple<ShoppingCart, IEnumerable<Coupon>, IEnumerable<Product>, IEnumerable<Category>> *@
+@model Tuple<ShoppingCart, IEnumerable<Coupon>, IEnumerable<Product>, IEnumerable<Category>>
+
+
+@{
+    decimal sumTotal = 0;
+    decimal discountTotal = 0;
+    decimal discount = 0;
+    decimal cost = 0;
+}
+
+@*Gio hang*@
+<h2 class="my-4">Giỏ hàng của bạn</h2>
+
+<form method="post" asp-action="RemoveAllFromCart">
+    <button type="submit" class="btn btn-danger">
+        Xóa hết
+    </button>
+</form>
+
+<table class="table table-striped border-bottom">
+    <thead class="thead-dark">
+        <tr>
+            <th>Hình ảnh</th>
+            <th>Sản phẩm</th>
+            <th>Loai</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Tạm tính</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Item1.Items)
+        {
+            <tr class="justify-content-between align-items-center">
+                <td>
+                    <a class="text-decoration-none text-black" asp-controller="Product" asp-action="Display" asp-route-productId="@item.ProductId">
+                        <img src="@item.ImageUrl" alt="@item.Name" style="width:100px;height:auto;">
+                    </a>
+                </td>
+                <td>
+                    <a class="text-decoration-none text-black" asp-controller="Product" asp-action="Display" asp-route-productId="@item.ProductId">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
+                <td>
+                    <a class="text-decoration-none text-black" asp-controller="Product" asp-action="Display" asp-route-productId="@item.ProductId">
+                        @Model.Item4.FirstOrDefault(c => c.Id == item.CategoryId)?.Name
+                    </a>
+                </td>
+                <td>
+                    <form asp-controller="ShoppingCart" asp-action="UpdateQuantity" method="post">
+                        <input type="hidden" name="productId" value="@item.ProductId" />
+                        <input type="number" name="quantity" value="@item.Quantity" min="1" />
+                        <button type="submit" class="btn btn-info btn-sm">Cập nhật</button>
+                    </form>
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Price)</td>
+                <td>@(item.Price * item.Quantity)</td>
+                <td>
+                    <a asp-action="RemoveFromCart" asp-route-productId="@item.ProductId" class="btn btn-danger btn-sm">Xóa</a>
+                </td>
+            </tr>
+            sumTotal += (item.Price * item.Quantity);
+        }
+    </tbody>
+</table>
+
+@* Choose Vouchers *@
+<h2>Vouchers</h2>
+<a asp-controller="Coupon" asp-action="ChooseCoupon">
+    <button class="btn btn-outline-dark">
+        <i class="bi bi-bag-plus-fill me-1"></i> Add vouchers
+    </button>
+</a>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Id</th>
+            <th>Code</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Discount</th>
+            <th>Start Date</th>
+            <th>End Date</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var coupon in Model.Item2)
+        {
+
+
+            <tr class="justify-content-between align-items-center ">
+                <td>
+                    <span>@coupon.Id</span>
+                </td>
+                <td>
+                    <span>
+                        @coupon.Code
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        @Model.Item4.FirstOrDefault(c => c.Id == coupon.CategoryId)?.Name
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        @coupon.Amount
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        @((int)coupon.Discount) %
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        @coupon.StartDate.ToShortDateString()
+                    </span>
+                </td>
+                <td>
+                    <span>
+                        @coupon.EndDate.ToShortDateString()
+                    </span>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@*Chi tiet hoa don*@
+
+
+<h2>Payment Detail</h2>
+
+<table class="table table-striped">
+    <thead class="thead-dark">
+        <tr>
+            <th>Hình ảnh</th>
+            <th>Sản phẩm</th>
+            <th>Loai</th>
+            <th>Số lượng</th>
+            <th>Giá</th>
+            <th>Tạm tính</th>
+            <th>Khuyến mãi</th>
+            <th>Giá cuối cùng</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.Item1.Items)
+        {
+
+            var coupon = Model.Item2.FirstOrDefault(c => c.CategoryId == item.CategoryId);
+
+            discount = coupon != null ? coupon.Discount : 0;
+            cost = item.Price * (1 - (discount / 100)) * item.Quantity;
+
+            sumTotal += (item.Price * item.Quantity);
+            discountTotal += cost;
+            <tr>
+                <td>
+                    <a class="text-decoration-none text-black" asp-controller="Product" asp-action="Display" asp-route-productId="@item.ProductId">
+                        <img src="@item.ImageUrl" alt="@item.Name" style="width:100px;height:auto;">
+                    </a>
+                </td>
+                <td>
+                    <a class="text-decoration-none text-black" asp-controller="Product" asp-action="Display" asp-route-productId="@item.ProductId">
+                        @Html.DisplayFor(modelItem => item.Name)
+                    </a>
+                </td>
+                <td>
+                    <a class="text-decoration-none text-black" asp-controller="Product" asp-action="Display" asp-route-productId="@item.ProductId">
+                        @Model.Item4.FirstOrDefault(c => c.Id == item.CategoryId)?.Name
+                    </a>
+                </td>
+                <td>
+                    <a class="text-decoration-none text-black" asp-controller="Product" asp-action="Display" asp-route-productId="@item.ProductId">
+                        @item.Quantity
+                    </a>
+                </td>
+                <td>@Html.DisplayFor(modelItem => item.Price)</td> @* gia *@
+                <td>@(item.Price * item.Quantity)</td>             @* tam tinh *@
+                <td>@discount %</td>                       @* khuyen mai *@
+                <td>@cost</td>                                     @* gia cuoi cung *@
+            </tr>
+
+        }
+        @{
+            sumTotal = sumTotal / 2;
+        }
+    </tbody>
+</table>
+
+<div class="my-4 d-flex justify-content-between">
+    <div>
+        <h1> </h1>
+    </div>
+    <div>
+        <p class="fw-bold">Tổng tiền tạm tính: @sumTotal.ToString("N0") VND</p>
+        <p class="fw-bold">Tổng tiền cuối cùng: @discountTotal.ToString("N0") VND</p>
+    </div>
+</div>
+
+<div class="my-4 d-flex justify-content-between">
+    <form action="@Url.Action("Checkout", "ShoppingCart")" >
+        <input type="hidden" name="discountTotal" value="@discountTotal" />
+        <button type="submit" class="btn btn-success">Tiến hành đặt hàng</button>
+    </form>
+     <a asp-action="OrderList" asp-controller="ShoppingCart" class="btn btn-info">Đơn hàng của bạn</a>
+</div>

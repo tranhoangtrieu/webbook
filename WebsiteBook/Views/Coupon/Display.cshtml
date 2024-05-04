@@ -1,0 +1,18 @@
+﻿@using Microsoft.IdentityModel.Tokens
+@model  Coupon
+
+<h2>Product Details</h2>
+
+<div>
+    <h4>Id: @Model.Id</h4>
+    <h4>Code: @Model.Code</h4>
+    <h4>Amount: @Model.Amount</h4>
+    <h4>Discount: @Model.Discount</h4>
+    <h4>Start Date: @Model.StartDate</h4>
+    <h4>End Date: @Model.EndDate</h4>
+    <h4>Category: @Model.Category.Name</h4>
+    <h4>State: @Model.IsActive</h4>
+
+
+</div>
+<a asp-action="Index">Cancel</a>
